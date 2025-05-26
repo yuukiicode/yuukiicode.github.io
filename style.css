@@ -1,1 +1,397 @@
+/* style.css */
+:root {
+    --font-heading: 'Montserrat', sans-serif;
+    --font-sans: 'Inter', sans-serif;
+
+    --color-text: #E5E7EB; /* Light grey for text on black */
+    --color-text-strong: #FFFFFF; /* Pure white for emphasis */
+    --color-text-muted: #9CA3AF; /* Medium grey for less emphasis */
+    --color-bg: #000000; /* Black background */
+    --color-bg-alt: #0A0A0A; /* Slightly off-black for depth */
+    --color-bg-card: #111111; /* Dark grey for cards */
+    
+    --color-accent: #FFFFFF; /* White as the primary accent in B&W */
+    --color-accent-hover: #CCCCCC; /* Light grey for hover */
+    --color-border: rgba(255, 255, 255, 0.15); /* Subtle white border */
+    --color-border-strong: rgba(255, 255, 255, 0.3);
+
+    /* --color-bg-approach-box: #0D0D0D; -- No longer primary style for these boxes */
+    /* --color-border-approach-box: rgba(255, 255, 255, 0.2); -- No longer primary style for these boxes */
+}
+
+/* Apply scroll-behavior via JS or keep class on HTML for non-JS scenarios */
+/* html.scroll-smooth { scroll-behavior: smooth; } */
+/* GSAP handles smooth scroll for links, so this is a fallback. */
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    overflow-x: hidden; /* Prevent horizontal scrollbars */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Prevent body scroll when mobile menu is open */
+body.mobile-menu-open {
+    overflow-y: hidden;
+}
+
+/* Custom Scrollbar Styling */
+::-webkit-scrollbar { 
+    width: 8px; 
+}
+::-webkit-scrollbar-track { 
+    background: var(--color-bg-alt); 
+}
+::-webkit-scrollbar-thumb { 
+    background: var(--color-accent); 
+    border-radius: 4px; 
+}
+::-webkit-scrollbar-thumb:hover { 
+    background: var(--color-accent-hover); 
+}
+
+/* Headings and Typographic Elements */
+h1, h2, h3, h4, h5, h6, .font-heading-style {
+    font-family: var(--font-heading);
+    color: var(--color-text-strong);
+    letter-spacing: -0.01em;
+}
+.section-title {
+    font-size: clamp(2.2rem, 5vw, 3.5rem); /* Responsive title size */
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+}
+.section-subtitle {
+    font-size: clamp(1rem, 2.2vw, 1.2rem);
+    color: var(--color-text-muted);
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+    margin-bottom: 3.5rem;
+}
+
+/* Header Styling */
+#main-header {
+    background-color: transparent;
+    transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border-bottom-color 0.3s ease-in-out;
+    border-bottom: 1px solid transparent;
+}
+.header-scrolled { /* Applied on scroll via JavaScript */
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
+    background-color: rgba(0, 0, 0, 0.85); /* Semi-transparent black */
+    border-bottom-color: var(--color-border);
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+}
+#main-header nav a.nav-link {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    transition: color 0.2s ease, background-color 0.2s ease;
+    color: var(--color-text-muted);
+    font-weight: 500;
+}
+#main-header nav a.nav-link:hover, 
+#main-header nav a.nav-link.active-link { /* active-link class applied by JS */
+    color: var(--color-accent);
+    background-color: rgba(255, 255, 255, 0.08); /* Subtle white highlight */
+}
+
+/* Hamburger Icon Styling */
+.hamburger-line { 
+    transition: all 0.3s ease; 
+    background-color: var(--color-text-strong); 
+}
+.mobile-nav-toggle[aria-expanded="true"] .hamburger-top { 
+    transform: rotate(45deg) translate(5px, 5px); 
+    background-color: var(--color-accent); 
+}
+.mobile-nav-toggle[aria-expanded="true"] .hamburger-middle { 
+    opacity: 0; 
+}
+.mobile-nav-toggle[aria-expanded="true"] .hamburger-bottom { 
+    transform: rotate(-45deg) translate(5px, -5px); 
+    background-color: var(--color-accent); 
+}
+
+/* Mobile Menu Styling */
+#mobile-menu {
+    background-color: rgba(10, 10, 10, 0.98); /* --color-bg-alt with opacity */
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
+    border-top: 1px solid var(--color-border);
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+    /* Opacity, visibility, and transform are controlled by JS and Tailwind classes */
+}
+#mobile-menu.menu-open { /* menu-open class applied by JS */
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+#mobile-menu nav a.mobile-nav-link {
+    color: var(--color-text);
+    font-size: 1.5rem; /* Larger for mobile tap targets */
+    padding: 0.8rem 1rem;
+    width: 100%;
+    text-align: center;
+    border-radius: 8px;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+#mobile-menu nav a.mobile-nav-link:hover, 
+#mobile-menu nav a.mobile-nav-link.active-link { /* active-link class applied by JS */
+    color: var(--color-accent);
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Hero Section Styling */
+#hero {
+    min-height: 100vh; /* Full viewport height */
+    background-color: var(--color-bg); /* Solid black for hero */
+}
+#hero h1 {
+    font-size: clamp(2.5rem, 6vw, 4.5rem); /* Large, responsive hero title */
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--color-text-strong); /* White hero title */
+}
+#hero .hero-tagline {
+    font-size: clamp(1.05rem, 2.5vw, 1.35rem);
+    color: var(--color-text-muted);
+    max-width: 750px; /* Control width of tagline */
+    line-height: 1.7;
+}
+
+/* Custom Button Styling */
+.btn-custom {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem 1.8rem; /* Generous padding */
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.25s ease;
+    cursor: pointer;
+    text-align: center;
+    border: 1.5px solid transparent;
+}
+.btn-custom-primary {
+    background-color: var(--color-accent); /* White button */
+    color: var(--color-bg); /* Black text */
+    border-color: var(--color-accent);
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+}
+.btn-custom-primary:hover {
+    background-color: var(--color-accent-hover); /* Light grey hover */
+    border-color: var(--color-accent-hover);
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+.btn-custom-secondary { /* Ghost button style */
+    background-color: transparent;
+    color: var(--color-accent);
+    border: 1.5px solid var(--color-accent);
+}
+.btn-custom-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.08); /* Subtle white fill */
+    color: var(--color-text-strong);
+}
+
+/* Section Base Styling */
+section { 
+    padding-top: 6rem; 
+    padding-bottom: 6rem; 
+    position: relative; 
+    overflow: hidden; /* For animations and to contain elements */
+}
+@media (min-width: 768px) { /* md breakpoint */
+    section { 
+        padding-top: 8rem; 
+        padding-bottom: 8rem; 
+    } 
+}
+.section-border-t { 
+    border-top: 1px solid var(--color-border); 
+}
+
+/* Card Styling (Service, Portfolio Placeholder, Approach) */
+.service-card, .portfolio-placeholder-card { 
+    background-color: var(--color-bg-card); 
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    padding: 2rem 1.75rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Ensure cards in a grid row have same height if needed */
+}
+.service-card:hover, .portfolio-placeholder-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--color-accent); 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.05);
+}
+.service-card h3, .portfolio-placeholder-card h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--color-text-strong);
+}
+.service-card p, .portfolio-placeholder-card p {
+    font-size: 0.95rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    flex-grow: 1; /* Allows p to take available space, useful for equal height cards */
+}
+.service-card .icon-container, .portfolio-placeholder-card .icon-container {
+    color: var(--color-accent);
+    font-size: 1.8rem; 
+    margin-bottom: 1rem;
+}
+.portfolio-placeholder-card .placeholder-tag {
+    font-size: 0.8rem;
+    color: var(--color-accent);
+    background-color: rgba(255,255,255,0.1);
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    display: inline-block;
+    margin-top: 1rem; 
+    font-weight: 500;
+    align-self: flex-start; /* Keep tag at the bottom if card content varies */
+}
+
+/* Skill Tag Styling */
+.skill-tag {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--color-accent);
+    padding: 0.4rem 0.9rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.skill-tag:hover {
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+}
+
+/* Custom Input Field Styling */
+.input-custom, textarea.input-custom {
+    background-color: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    border-radius: 8px;
+    padding: 0.9rem 1.2rem;
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    width: 100%;
+    font-size: 0.95rem;
+}
+.input-custom::placeholder, textarea.input-custom::placeholder { 
+    color: var(--color-text-muted); 
+    opacity: 0.7; 
+}
+.input-custom:focus, textarea.input-custom:focus {
+    outline: none;
+    border-color: var(--color-accent); /* White border on focus */
+    background-color: var(--color-bg); 
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1); /* Subtle white glow */
+}
+textarea.input-custom { 
+    min-height: 120px; 
+    resize: vertical; 
+}
+
+/* Footer Styling */
+#main-footer {
+    border-top: 1px solid var(--color-border);
+    background-color: var(--color-bg); 
+    padding-top: 3.5rem; 
+    padding-bottom: 3.5rem;
+}
+#main-footer a:hover i {
+    transform: scale(1.15);
+    color: var(--color-accent); 
+}
+#main-footer a i { 
+    transition: transform 0.2s ease, color 0.2s ease; 
+    font-size: 1.5rem; /* Slightly larger footer icons */
+    color: var(--color-text-muted);
+}
+#main-footer p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--color-text-muted);
+}
+#main-footer .footer-highlight { 
+    color: var(--color-accent); 
+}
+
+/* GSAP Animation Helper Classes (Initial States) */
+.g-fade-in, 
+.g-fade-in-up, 
+.g-fade-in-down, 
+.g-fade-in-left, 
+.g-fade-in-right, 
+.g-scale-in {
+    opacity: 0; 
+    will-change: transform, opacity; /* Performance hint for animations */
+}
+.g-stagger-children > * {
+    opacity: 0; /* Children start hidden for GSAP stagger animations */
+}
+
+/* Back to Top Button Styling */
+#back-to-top {
+    background-color: rgba(255, 255, 255, 0.15); /* Semi-transparent white */
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    color: var(--color-text-strong); /* White icon */
+    width: 3rem; /* 48px */
+    height: 3rem; /* 48px */
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease, background-color 0.3s ease;
+    /* Opacity and visibility controlled by JS and Tailwind classes */
+}
+#back-to-top:hover {
+     background-color: rgba(255, 255, 255, 0.25);
+     transform: scale(1.08) translateY(-2px); 
+}
+#back-to-top i { 
+    font-size: 1.1rem; 
+}
+
+/* Ensure text selection color is pleasant on dark background */
+::selection {
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+}
+::-moz-selection { /* Firefox */
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+}
+
+/* Add a text color to the body for Tailwind utilities if not already inherited */
+.text-color-text { color: var(--color-text); }
+.text-color-text-strong { color: var(--color-text-strong); }
+.text-color-text-muted { color: var(--color-text-muted); }
+.text-color-accent { color: var(--color-accent); }
+
+/* Fallback for browsers that don't support backdrop-filter well */
+@supports not ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
+  .header-scrolled, #mobile-menu, #back-to-top {
+    background-color: rgba(0, 0, 0, 0.95); /* More opaque fallback */
+  }
+  #back-to-top {
+    background-color: rgba(25, 25, 25, 0.85); /* Darker fallback for BTT */
+  }
+  #back-to-top:hover {
+    background-color: rgba(45, 45, 45, 0.95);
+  }
+}
 

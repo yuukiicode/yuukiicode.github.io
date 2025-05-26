@@ -104,18 +104,18 @@ h1, h2, h3, h4, h5, h6, .font-heading-style {
 /* Hamburger Icon Styling */
 .hamburger-line { 
     transition: all 0.3s ease; 
-    background-color: var(--color-text-strong); 
+    background-color: var(--color-text-strong); /* This makes the lines white */
 }
 .mobile-nav-toggle[aria-expanded="true"] .hamburger-top { 
     transform: rotate(45deg) translate(5px, 5px); 
-    background-color: var(--color-accent); 
+    background-color: var(--color-accent); /* This also ensures white color when 'X' */
 }
 .mobile-nav-toggle[aria-expanded="true"] .hamburger-middle { 
     opacity: 0; 
 }
 .mobile-nav-toggle[aria-expanded="true"] .hamburger-bottom { 
     transform: rotate(-45deg) translate(5px, -5px); 
-    background-color: var(--color-accent); 
+    background-color: var(--color-accent); /* This also ensures white color when 'X' */
 }
 
 /* Mobile Menu Styling */
@@ -267,12 +267,13 @@ section {
 /* Skill Tag Styling */
 .skill-tag {
     background-color: rgba(255, 255, 255, 0.1);
-    color: var(--color-accent);
+    color: var(--color-accent); /* White text */
     padding: 0.4rem 0.9rem;
     border-radius: 6px;
     font-size: 0.85rem;
     font-weight: 500;
     transition: background-color 0.2s ease, color 0.2s ease;
+    display: inline-block; /* Ensures tags behave well with flex-wrap */
 }
 .skill-tag:hover {
     background-color: var(--color-accent);
@@ -394,4 +395,3 @@ textarea.input-custom {
     background-color: rgba(45, 45, 45, 0.95);
   }
 }
-

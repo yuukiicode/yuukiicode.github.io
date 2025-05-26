@@ -29,13 +29,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const isExpanded = mobileNavToggle.getAttribute('aria-expanded') === 'true';
             mobileNavToggle.setAttribute('aria-expanded', String(!isExpanded));
             
-            // Toggle Tailwind classes for visibility and animation
-            mobileMenu.classList.toggle('menu-open'); // Custom class to track state if needed for CSS
+            mobileMenu.classList.toggle('menu-open'); 
             mobileMenu.classList.toggle('opacity-0');
             mobileMenu.classList.toggle('invisible');
-            mobileMenu.classList.toggle('-translate-y-5'); // Animation class
+            mobileMenu.classList.toggle('-translate-y-5'); 
             
-            // Toggle body scroll lock
             document.body.classList.toggle('mobile-menu-open', !isExpanded);
         });
     }
@@ -48,29 +46,55 @@ document.addEventListener('DOMContentLoaded', () => {
             const targetElement = document.querySelector(targetId);
 
             if (targetElement) {
-                const headerHeight = mainHeaderElement ? mainHeaderElement.offsetHeight : 80; // Default to 80px if header not found
-                let scrollToPosition = targetElement.offsetTop - headerHeight;
-                
-                // Ensure top of hero section is exactly at the top of viewport
-                if (targetId === '#hero') {
-                    scrollToPosition = 0;
-                }
+                const closeMobileMenu = () => {
+                    if (mobileMenu && mobileMenu.classList.contains('menu-open')) {
+                        mobileNavToggle.setAttribute('aria-expanded', 'false');
+                        mobileMenu.classList.remove('menu-open');
+                        mobileMenu.classList.add('opacity-0', 'invisible', '-translate-y-5');
+                        document.body.classList.remove('mobile-menu-open');
+                        return true; // Indicate menu was closed
+                    }
+                    return false; // Menu was not open or not present
+                };
 
-                gsap.to(window, {
-                    duration: 0.8, // Animation duration
-                    scrollTo: { 
-                        y: scrollToPosition, 
-                        autoKill: true // Stop animation if user scrolls manually
-                    },
-                    ease: "power2.inOut" // Easing function
-                });
+                const performScroll = () => {
+                    const headerElementForOffset = document.getElementById('main-header');
+                    let headerOffset = 0;
 
-                // If mobile menu is open, close it
-                if (mobileMenu && mobileMenu.classList.contains('menu-open')) {
-                    mobileNavToggle.setAttribute('aria-expanded', 'false');
-                    mobileMenu.classList.remove('menu-open');
-                    mobileMenu.classList.add('opacity-0', 'invisible', '-translate-y-5');
-                    document.body.classList.remove('mobile-menu-open'); // Remove scroll lock
+                    // Only apply header offset if not scrolling to the #hero section
+                    // and the header element is present and has a height.
+                    if (targetId !== '#hero') {
+                        if (headerElementForOffset && headerElementForOffset.offsetHeight > 0) {
+                            headerOffset = headerElementForOffset.offsetHeight;
+                        } else {
+                            // Fallback static header height if dynamic one isn't available
+                            // Considers typical mobile (h-20 = 80px) vs desktop (md:h-24 = 96px)
+                            headerOffset = window.innerWidth < 768 ? 80 : 96;
+                        }
+                    }
+                    
+                    let scrollToPosition = targetElement.offsetTop - headerOffset;
+                    // Ensure scrollToPosition is not negative (e.g. if header is taller than element's offset from top)
+                    scrollToPosition = Math.max(0, scrollToPosition);
+
+                    gsap.to(window, {
+                        duration: 0.8, // Animation duration
+                        scrollTo: { 
+                            y: scrollToPosition, 
+                            autoKill: true // Stop animation if user scrolls manually
+                        },
+                        ease: "power2.inOut" // Easing function
+                    });
+                };
+
+                if (closeMobileMenu()) {
+                    // If mobile menu was closed, use requestAnimationFrame
+                    // to ensure layout updates (like body scrollbar) are processed
+                    // before calculating scroll positions.
+                    requestAnimationFrame(performScroll);
+                } else {
+                    // If menu was not open (e.g., desktop link click), scroll immediately.
+                    performScroll();
                 }
             }
         });
@@ -80,9 +104,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateActiveLink() {
         if (!sections.length || !mainHeaderElement) return;
 
-        let currentSectionId = 'hero'; // Default to hero
+        let currentSectionId = 'hero'; 
         const headerHeightForActiveLink = mainHeaderElement.offsetHeight;
         // Offset to trigger active state slightly before section top hits header bottom
+        // or when a good portion of the section is visible.
         const scrollYWithOffset = window.scrollY + headerHeightForActiveLink + 60; 
 
         sections.forEach(section => {
@@ -93,15 +118,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
         allNavLinks.forEach(link => {
             link.classList.remove('active-link');
-            // Check if the link's href matches the current section and it's not a button styled as a link
             if (link.getAttribute('href') === `#${currentSectionId}` && !link.classList.contains('btn-custom')) {
                 link.classList.add('active-link');
             }
         });
     }
-    // Call on load and on scroll
     window.addEventListener('scroll', updateActiveLink);
-    updateActiveLink(); 
+    updateActiveLink(); // Initial call
 
     // --- Back to Top Button ---
     if (backToTopButton) {
@@ -109,14 +132,13 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             gsap.to(window, { 
                 duration: 1, 
-                scrollTo: { y: '#hero' }, // Scroll to the top (hero section)
+                scrollTo: { y: '#hero' }, 
                 ease: "power2.inOut" 
             });
         });
 
-        // Show/hide button based on scroll position
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) { // Show after 300px scroll
+            if (window.scrollY > 300) { 
                 backToTopButton.classList.remove('opacity-0', 'invisible');
             } else {
                 backToTopButton.classList.add('opacity-0', 'invisible');
@@ -125,7 +147,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- GSAP Animations ---
-    // Hero section animations
     gsap.fromTo("#hero h1", 
         { opacity: 0, y: 50, scale: 0.95 }, 
         { opacity: 1, y: 0, scale: 1, duration: 1, ease: "expo.out", delay: 0.3 }
@@ -138,37 +159,32 @@ document.addEventListener('DOMContentLoaded', () => {
         { opacity: 0, y: 30, scale: 0.9 }, 
         { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "back.out(1.4)", stagger: 0.15, delay: 0.9 }
     );
-    // Header elements fade in
     gsap.fromTo("#main-header .g-fade-in-down", 
         {opacity:0, y:-25}, 
         {opacity:1, y:0, duration:0.7, ease:"power2.out", stagger:0.1, delay:1.2}
     );
 
-    // Helper function for creating scroll-triggered animations
     const createScrollAnimation = (selector, fromVars, toVarsBase, stagger = 0.1) => {
         gsap.utils.toArray(selector).forEach((el, i) => {
-            // Use CSS animation-delay if present, otherwise default to 0
             const cssDelay = parseFloat(el.style.animationDelay) || 0; 
             const animationDelay = cssDelay + (stagger > 0 ? (i * stagger) : 0);
 
             gsap.fromTo(el, fromVars, {
-                ...toVarsBase, // Spread base 'to' variables
+                ...toVarsBase, 
                 delay: animationDelay, 
                 scrollTrigger: {
                     trigger: el,
-                    start: "top 85%", // Animation starts when element is 85% from top of viewport
-                    end: "bottom 15%", // Useful for scrub or complex toggleActions
-                    toggleActions: "play none none reverse", // Play on enter, reverse on leave
+                    start: "top 85%", 
+                    end: "bottom 15%", 
+                    toggleActions: "play none none reverse", 
                 }
             });
         });
     };
     
-    // Apply scroll animations to various sections
     createScrollAnimation(".section-title.g-fade-in-up", { opacity: 0, y: 50, scale:0.98 }, { opacity: 1, y: 0, scale:1, duration: 0.8, ease: "expo.out" }, 0);
     createScrollAnimation(".section-subtitle.g-fade-in-up", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, 0);
     
-    // Staggered animation for service cards, portfolio cards, and approach cards (if they use .service-card)
     gsap.fromTo(".g-stagger-children > .service-card, .g-stagger-children > .portfolio-placeholder-card", 
         { opacity: 0, y: 40, scale: 0.95 }, 
         { 
@@ -177,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ease: "back.out(1.2)", 
             stagger: 0.15,
             scrollTrigger: {
-                trigger: ".g-stagger-children", // Parent container as trigger
+                trigger: ".g-stagger-children", 
                 start: "top 80%",
                 toggleActions: "play none none reverse"
             }
@@ -191,47 +207,37 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Contact Form Handling ---
     if (contactForm && formStatus) {
         contactForm.addEventListener('submit', (e) => {
-            e.preventDefault(); // Prevent default form submission
-            const nameInput = document.getElementById('name'); // Added name input for completeness, though not validated here
+            e.preventDefault(); 
+            const nameInput = document.getElementById('name');
             const emailInput = document.getElementById('email');
             const messageInput = document.getElementById('message');
             let isValid = true;
             let statusMessage = '';
 
-            // Basic validation
             if (emailInput.value.trim() === '' || !emailInput.checkValidity()) {
                 statusMessage = 'Please enter a valid email address.';
                 isValid = false;
                 if(emailInput) emailInput.focus();
             } else if (messageInput.value.trim() === '') {
-                 statusMessage = 'Please write a message.';
-                 isValid = false;
-                 if(messageInput) messageInput.focus();
+                statusMessage = 'Please write a message.';
+                isValid = false;
+                if(messageInput) messageInput.focus();
             }
 
             if (!isValid) {
                 formStatus.textContent = statusMessage;
-                formStatus.className = 'mt-6 text-sm text-red-400'; // Tailwind class for error color
+                formStatus.className = 'mt-6 text-sm text-red-400'; 
                 return;
             }
 
-            // If valid, show sending message
             formStatus.textContent = 'Sending your message...';
-            formStatus.className = 'mt-6 text-sm text-yellow-400'; // Tailwind class for processing color
+            formStatus.className = 'mt-6 text-sm text-yellow-400'; 
             
-            // Simulate form submission (replace with actual AJAX call to a backend)
             setTimeout(() => {
-                // In a real application, you would send the form data to a server endpoint.
-                // For example, using fetch API:
-                // fetch('YOUR_SERVER_ENDPOINT', { method: 'POST', body: new FormData(contactForm) })
-                // .then(response => response.json())
-                // .then(data => { ... handle success ... })
-                // .catch(error => { ... handle error ... });
-
                 formStatus.textContent = 'Message sent! I\'ll get back to you soon.';
-                formStatus.className = 'mt-6 text-sm text-green-400'; // Tailwind class for success color
-                contactForm.reset(); // Clear the form fields
-            }, 1500); // Simulate network delay
+                formStatus.className = 'mt-6 text-sm text-green-400'; 
+                contactForm.reset(); 
+            }, 1500); 
         });
     }
 
@@ -241,5 +247,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Console Log for Initialization ---
-    console.log("yuukii - Freelance Digital Services Portfolio Initialized with separated JS.");
+    console.log("yuukii - Freelance Digital Services Portfolio Initialized.");
 });

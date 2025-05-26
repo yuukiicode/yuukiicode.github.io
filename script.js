@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
             mobileMenu.classList.toggle('invisible');
             mobileMenu.classList.toggle('-translate-y-5'); 
             
+            // Toggle body scroll lock
             document.body.classList.toggle('mobile-menu-open', !isExpanded);
         });
     }
@@ -46,55 +47,52 @@ document.addEventListener('DOMContentLoaded', () => {
             const targetElement = document.querySelector(targetId);
 
             if (targetElement) {
-                const closeMobileMenu = () => {
-                    if (mobileMenu && mobileMenu.classList.contains('menu-open')) {
-                        mobileNavToggle.setAttribute('aria-expanded', 'false');
-                        mobileMenu.classList.remove('menu-open');
-                        mobileMenu.classList.add('opacity-0', 'invisible', '-translate-y-5');
-                        document.body.classList.remove('mobile-menu-open');
-                        return true; // Indicate menu was closed
-                    }
-                    return false; // Menu was not open or not present
-                };
+                const isMobileMenuLinkClicked = this.closest('#mobile-menu') !== null;
 
-                const performScroll = () => {
-                    const headerElementForOffset = document.getElementById('main-header');
+                const performScrollLogic = () => {
+                    // Always get the most current header element reference right before calculation
+                    const currentFixedHeader = document.getElementById('main-header');
                     let headerOffset = 0;
 
-                    // Only apply header offset if not scrolling to the #hero section
-                    // and the header element is present and has a height.
+                    // Determine header offset only if not scrolling to #hero
                     if (targetId !== '#hero') {
-                        if (headerElementForOffset && headerElementForOffset.offsetHeight > 0) {
-                            headerOffset = headerElementForOffset.offsetHeight;
+                        if (currentFixedHeader && currentFixedHeader.offsetHeight > 0) {
+                            headerOffset = currentFixedHeader.offsetHeight;
                         } else {
-                            // Fallback static header height if dynamic one isn't available
-                            // Considers typical mobile (h-20 = 80px) vs desktop (md:h-24 = 96px)
-                            headerOffset = window.innerWidth < 768 ? 80 : 96;
+                            // Fallback based on viewport width if header height somehow isn't available
+                            // Corresponds to h-20 (80px) and md:h-24 (96px)
+                            headerOffset = window.innerWidth < 768 ? 80 : 96; 
                         }
                     }
                     
                     let scrollToPosition = targetElement.offsetTop - headerOffset;
-                    // Ensure scrollToPosition is not negative (e.g. if header is taller than element's offset from top)
+                    // Ensure we don't calculate a scroll position above the very top of the page
                     scrollToPosition = Math.max(0, scrollToPosition);
 
                     gsap.to(window, {
-                        duration: 0.8, // Animation duration
+                        duration: 0.8, 
                         scrollTo: { 
                             y: scrollToPosition, 
                             autoKill: true // Stop animation if user scrolls manually
                         },
-                        ease: "power2.inOut" // Easing function
+                        ease: "power2.inOut"
                     });
                 };
 
-                if (closeMobileMenu()) {
-                    // If mobile menu was closed, use requestAnimationFrame
-                    // to ensure layout updates (like body scrollbar) are processed
-                    // before calculating scroll positions.
-                    requestAnimationFrame(performScroll);
+                // If the click came from a link within the mobile menu AND the menu is currently open
+                if (isMobileMenuLinkClicked && mobileMenu && mobileMenu.classList.contains('menu-open')) {
+                    // First, close the mobile menu
+                    mobileNavToggle.setAttribute('aria-expanded', 'false');
+                    mobileMenu.classList.remove('menu-open');
+                    mobileMenu.classList.add('opacity-0', 'invisible', '-translate-y-5');
+                    document.body.classList.remove('mobile-menu-open'); // Unlock body scroll
+
+                    // Use requestAnimationFrame to ensure the DOM has updated (menu closed, scrollbar restored)
+                    // before calculating positions and initiating the scroll.
+                    requestAnimationFrame(performScrollLogic);
                 } else {
-                    // If menu was not open (e.g., desktop link click), scroll immediately.
-                    performScroll();
+                    // For desktop links or if mobile menu isn't the context, scroll immediately
+                    performScrollLogic();
                 }
             }
         });
@@ -102,15 +100,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Active Link Highlighting on Scroll ---
     function updateActiveLink() {
-        if (!sections.length || !mainHeaderElement) return;
+        if (!sections.length) return; // Exit if no sections found
 
-        let currentSectionId = 'hero'; 
-        const headerHeightForActiveLink = mainHeaderElement.offsetHeight;
-        // Offset to trigger active state slightly before section top hits header bottom
-        // or when a good portion of the section is visible.
+        // Use the actual mainHeaderElement if available, otherwise fallback height for calculations
+        const currentFixedHeader = document.getElementById('main-header');
+        let headerHeightForActiveLink = 0;
+        if (currentFixedHeader) {
+            headerHeightForActiveLink = currentFixedHeader.offsetHeight;
+        } else {
+            headerHeightForActiveLink = window.innerWidth < 768 ? 80 : 96; // Fallback
+        }
+        
+        let currentSectionId = 'hero'; // Default to hero
+        // Offset to trigger active state when section top is comfortably below the fixed header
         const scrollYWithOffset = window.scrollY + headerHeightForActiveLink + 60; 
 
         sections.forEach(section => {
+            // Check if the section is the currently active one based on scroll position
             if (section.offsetTop <= scrollYWithOffset && (section.offsetTop + section.offsetHeight) > scrollYWithOffset) {
                 currentSectionId = section.getAttribute('id');
             }
@@ -118,13 +124,15 @@ document.addEventListener('DOMContentLoaded', () => {
         
         allNavLinks.forEach(link => {
             link.classList.remove('active-link');
+            // Check if the link's href matches the current section and it's not a button styled as a link (like contact)
             if (link.getAttribute('href') === `#${currentSectionId}` && !link.classList.contains('btn-custom')) {
                 link.classList.add('active-link');
             }
         });
     }
+    // Call on load and on scroll
     window.addEventListener('scroll', updateActiveLink);
-    updateActiveLink(); // Initial call
+    updateActiveLink(); 
 
     // --- Back to Top Button ---
     if (backToTopButton) {
@@ -132,13 +140,14 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             gsap.to(window, { 
                 duration: 1, 
-                scrollTo: { y: '#hero' }, 
+                scrollTo: { y: '#hero' }, // Scroll to the top (hero section)
                 ease: "power2.inOut" 
             });
         });
 
+        // Show/hide button based on scroll position
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) { 
+            if (window.scrollY > 300) { // Show after 300px scroll
                 backToTopButton.classList.remove('opacity-0', 'invisible');
             } else {
                 backToTopButton.classList.add('opacity-0', 'invisible');
@@ -147,6 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- GSAP Animations ---
+    // Hero section animations
     gsap.fromTo("#hero h1", 
         { opacity: 0, y: 50, scale: 0.95 }, 
         { opacity: 1, y: 0, scale: 1, duration: 1, ease: "expo.out", delay: 0.3 }
@@ -159,32 +169,38 @@ document.addEventListener('DOMContentLoaded', () => {
         { opacity: 0, y: 30, scale: 0.9 }, 
         { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "back.out(1.4)", stagger: 0.15, delay: 0.9 }
     );
+    // Header elements fade in
     gsap.fromTo("#main-header .g-fade-in-down", 
         {opacity:0, y:-25}, 
         {opacity:1, y:0, duration:0.7, ease:"power2.out", stagger:0.1, delay:1.2}
     );
 
+    // Helper function for creating scroll-triggered animations
     const createScrollAnimation = (selector, fromVars, toVarsBase, stagger = 0.1) => {
-        gsap.utils.toArray(selector).forEach((el, i) => {
-            const cssDelay = parseFloat(el.style.animationDelay) || 0; 
+        const elements = gsap.utils.toArray(selector);
+        elements.forEach((el, i) => {
+            // Use CSS animation-delay if present, otherwise default to 0
+            const cssDelay = parseFloat(window.getComputedStyle(el).animationDelay) || 0; 
             const animationDelay = cssDelay + (stagger > 0 ? (i * stagger) : 0);
 
             gsap.fromTo(el, fromVars, {
-                ...toVarsBase, 
+                ...toVarsBase, // Spread base 'to' variables
                 delay: animationDelay, 
                 scrollTrigger: {
                     trigger: el,
-                    start: "top 85%", 
-                    end: "bottom 15%", 
-                    toggleActions: "play none none reverse", 
+                    start: "top 85%", // Animation starts when element is 85% from top of viewport
+                    end: "bottom 15%", // Useful for scrub or complex toggleActions
+                    toggleActions: "play none none reverse", // Play on enter, reverse on leave
                 }
             });
         });
     };
     
+    // Apply scroll animations to various sections
     createScrollAnimation(".section-title.g-fade-in-up", { opacity: 0, y: 50, scale:0.98 }, { opacity: 1, y: 0, scale:1, duration: 0.8, ease: "expo.out" }, 0);
     createScrollAnimation(".section-subtitle.g-fade-in-up", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, 0);
     
+    // Staggered animation for service cards, portfolio cards, and approach cards
     gsap.fromTo(".g-stagger-children > .service-card, .g-stagger-children > .portfolio-placeholder-card", 
         { opacity: 0, y: 40, scale: 0.95 }, 
         { 
@@ -193,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ease: "back.out(1.2)", 
             stagger: 0.15,
             scrollTrigger: {
-                trigger: ".g-stagger-children", 
+                trigger: ".g-stagger-children", // Parent container as trigger
                 start: "top 80%",
                 toggleActions: "play none none reverse"
             }
@@ -207,37 +223,44 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Contact Form Handling ---
     if (contactForm && formStatus) {
         contactForm.addEventListener('submit', (e) => {
-            e.preventDefault(); 
-            const nameInput = document.getElementById('name');
+            e.preventDefault(); // Prevent default form submission
+            const nameInput = document.getElementById('name'); 
             const emailInput = document.getElementById('email');
             const messageInput = document.getElementById('message');
             let isValid = true;
             let statusMessage = '';
 
-            if (emailInput.value.trim() === '' || !emailInput.checkValidity()) {
+            // Basic validation
+            if (!nameInput || nameInput.value.trim() === '') { // Added name validation
+                statusMessage = 'Please enter your name.';
+                isValid = false;
+                if(nameInput) nameInput.focus();
+            } else if (!emailInput || emailInput.value.trim() === '' || !emailInput.checkValidity()) {
                 statusMessage = 'Please enter a valid email address.';
                 isValid = false;
-                if(emailInput) emailInput.focus();
-            } else if (messageInput.value.trim() === '') {
+                if(emailInput && isValid) emailInput.focus(); // Focus only if name was valid
+            } else if (!messageInput || messageInput.value.trim() === '') {
                 statusMessage = 'Please write a message.';
                 isValid = false;
-                if(messageInput) messageInput.focus();
+                if(messageInput && isValid) messageInput.focus(); // Focus only if name/email were valid
             }
 
             if (!isValid) {
                 formStatus.textContent = statusMessage;
-                formStatus.className = 'mt-6 text-sm text-red-400'; 
+                formStatus.className = 'mt-6 text-sm text-red-400'; // Tailwind class for error color
                 return;
             }
 
+            // If valid, show sending message
             formStatus.textContent = 'Sending your message...';
-            formStatus.className = 'mt-6 text-sm text-yellow-400'; 
+            formStatus.className = 'mt-6 text-sm text-yellow-400'; // Tailwind class for processing color
             
+            // Simulate form submission (replace with actual AJAX call to a backend)
             setTimeout(() => {
                 formStatus.textContent = 'Message sent! I\'ll get back to you soon.';
-                formStatus.className = 'mt-6 text-sm text-green-400'; 
-                contactForm.reset(); 
-            }, 1500); 
+                formStatus.className = 'mt-6 text-sm text-green-400'; // Tailwind class for success color
+                contactForm.reset(); // Clear the form fields
+            }, 1500); // Simulate network delay
         });
     }
 

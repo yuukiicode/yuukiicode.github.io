@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>yuukii - Freelance Digital Services</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --font-heading: 'Montserrat', sans-serif;
+            --font-sans: 'Inter', sans-serif;
+
+            --color-text: #E5E7EB; /* Light grey for text on black */
+            --color-text-strong: #FFFFFF; /* Pure white for emphasis */
+            --color-text-muted: #9CA3AF; /* Medium grey for less emphasis */
+            --color-bg: #000000; /* Black background */
+            --color-bg-alt: #0A0A0A; /* Slightly off-black for depth */
+            --color-bg-card: #111111; /* Dark grey for cards */
+            --color-bg-approach-box: #0D0D0D; /* Slightly different for approach boxes (no longer primary style for these boxes) */
+            
+            --color-accent: #FFFFFF; /* White as the primary accent in B&W */
+            --color-accent-hover: #CCCCCC; /* Light grey for hover */
+            --color-border: rgba(255, 255, 255, 0.15); /* Subtle white border */
+            --color-border-strong: rgba(255, 255, 255, 0.3);
+            --color-border-approach-box: rgba(255, 255, 255, 0.2); /* (no longer primary style for these boxes) */
+        }
+
+        html {
+             scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        body.mobile-menu-open {
+            overflow-y: hidden;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--color-bg-alt); }
+        ::-webkit-scrollbar-thumb { background: var(--color-accent); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-accent-hover); }
+
+        h1, h2, h3, h4, h5, h6, .font-heading-style {
+            font-family: var(--font-heading);
+            color: var(--color-text-strong);
+            letter-spacing: -0.01em;
+        }
+        .section-title {
+            font-size: clamp(2.2rem, 5vw, 3.5rem); /* Responsive title size */
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+        .section-subtitle {
+            font-size: clamp(1rem, 2.2vw, 1.2rem);
+            color: var(--color-text-muted);
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+            margin-bottom: 3.5rem;
+        }
+
+        #main-header {
+            background-color: transparent;
+            transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border-bottom-color 0.3s ease-in-out;
+            border-bottom: 1px solid transparent;
+        }
+        .header-scrolled { /* Applied on scroll */
+            backdrop-filter: blur(10px) saturate(180%);
+            -webkit-backdrop-filter: blur(10px) saturate(180%);
+            background-color: rgba(0, 0, 0, 0.85); /* Semi-transparent black */
+            border-bottom-color: var(--color-border);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+        #main-header nav a.nav-link {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: color 0.2s ease, background-color 0.2s ease;
+            color: var(--color-text-muted);
+            font-weight: 500;
+        }
+        #main-header nav a.nav-link:hover, 
+        #main-header nav a.nav-link.active-link {
+            color: var(--color-accent);
+            background-color: rgba(255, 255, 255, 0.08); /* Subtle white highlight */
+        }
+        .hamburger-line { 
+            transition: all 0.3s ease; 
+            background-color: var(--color-text-strong); 
+        }
+        .mobile-nav-toggle[aria-expanded="true"] .hamburger-top { transform: rotate(45deg) translate(5px, 5px); background-color: var(--color-accent); }
+        .mobile-nav-toggle[aria-expanded="true"] .hamburger-middle { opacity: 0; }
+        .mobile-nav-toggle[aria-expanded="true"] .hamburger-bottom { transform: rotate(-45deg) translate(5px, -5px); background-color: var(--color-accent); }
+
+        #mobile-menu {
+            background-color: rgba(10, 10, 10, 0.98); /* --color-bg-alt with opacity */
+            backdrop-filter: blur(10px) saturate(180%);
+            border-top: 1px solid var(--color-border);
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+        }
+        #mobile-menu.menu-open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        #mobile-menu nav a.mobile-nav-link {
+            color: var(--color-text);
+            font-size: 1.5rem; /* Larger for mobile tap targets */
+            padding: 0.8rem 1rem;
+            width: 100%;
+            text-align: center;
+            border-radius: 8px;
+            transition: color 0.2s ease, background-color 0.2s ease;
+        }
+        #mobile-menu nav a.mobile-nav-link:hover, 
+        #mobile-menu nav a.mobile-nav-link.active-link {
+            color: var(--color-accent);
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        #hero {
+            min-height: 100vh; /* Full viewport height */
+            background-color: var(--color-bg); /* Solid black for hero */
+        }
+        #hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem); /* Large, responsive hero title */
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            color: var(--color-text-strong); /* White hero title */
+        }
+        #hero .hero-tagline {
+            font-size: clamp(1.05rem, 2.5vw, 1.35rem);
+            color: var(--color-text-muted);
+            max-width: 750px; /* Control width of tagline */
+            line-height: 1.7;
+        }
+
+        .btn-custom {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.8rem 1.8rem; /* Generous padding */
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.25s ease;
+            cursor: pointer;
+            text-align: center;
+            border: 1.5px solid transparent;
+        }
+        .btn-custom-primary {
+            background-color: var(--color-accent); /* White button */
+            color: var(--color-bg); /* Black text */
+            border-color: var(--color-accent);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+        }
+        .btn-custom-primary:hover {
+            background-color: var(--color-accent-hover); /* Light grey hover */
+            border-color: var(--color-accent-hover);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+        .btn-custom-secondary { /* Ghost button style */
+            background-color: transparent;
+            color: var(--color-accent);
+            border: 1.5px solid var(--color-accent);
+        }
+        .btn-custom-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.08); /* Subtle white fill */
+            color: var(--color-text-strong);
+        }
+
+        section { 
+            padding-top: 6rem; 
+            padding-bottom: 6rem; 
+            position: relative; 
+            overflow: hidden; /* For animations */
+        }
+        @media (min-width: 768px) { 
+            section { padding-top: 8rem; padding-bottom: 8rem; } 
+        }
+        .section-border-t { border-top: 1px solid var(--color-border); }
+
+        .service-card, .portfolio-placeholder-card { /* Shared style for cards */
+            background-color: var(--color-bg-card); 
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            padding: 2rem 1.75rem;
+            display: flex;
+            flex-direction: column;
+        }
+        .service-card:hover, .portfolio-placeholder-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--color-accent); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.05);
+        }
+        .service-card h3, .portfolio-placeholder-card h3 { /* This will now also style h3 in the modified approach boxes */
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--color-text-strong);
+        }
+        .service-card p, .portfolio-placeholder-card p { /* This will now also style p in the modified approach boxes */
+            font-size: 0.95rem;
+            color: var(--color-text-muted);
+            line-height: 1.6;
+            flex-grow: 1; /* Allows p to take available space */
+        }
+        .service-card .icon-container, .portfolio-placeholder-card .icon-container { /* This will now also style icons in the modified approach boxes */
+            color: var(--color-accent);
+            font-size: 1.8rem; /* Icon size from service/portfolio cards */
+            margin-bottom: 1rem;
+        }
+        .portfolio-placeholder-card .placeholder-tag {
+            font-size: 0.8rem;
+            color: var(--color-accent);
+            background-color: rgba(255,255,255,0.1);
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 1rem; /* Added margin-top for spacing if content above is short */
+            font-weight: 500;
+        }
+        
+        /* .approach-box styles are no longer primary for the "My Approach" cards, 
+           but kept here in case they are used elsewhere or for reference. 
+           The styling is now primarily driven by .service-card */
+        .approach-box { 
+            background-color: var(--color-bg-approach-box);
+            border: 1px solid var(--color-border-approach-box);
+            border-radius: 12px;
+            padding: 1.5rem; 
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .approach-box:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        .approach-box .icon-container { /* Kept for reference, but .service-card .icon-container will take precedence if classes are changed */
+            font-size: 1.5rem; 
+            color: var(--color-accent);
+            margin-right: 0.75rem;
+        }
+        .approach-box h3 { /* Kept for reference */
+            font-size: 1.25rem; 
+        }
+
+
+        .skill-tag {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--color-accent);
+            padding: 0.4rem 0.9rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .skill-tag:hover {
+            background-color: var(--color-accent);
+            color: var(--color-bg);
+        }
+
+
+        .input-custom, textarea.input-custom {
+            background-color: var(--color-bg-alt);
+            border: 1px solid var(--color-border);
+            color: var(--color-text);
+            border-radius: 8px;
+            padding: 0.9rem 1.2rem;
+            transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+            width: 100%;
+            font-size: 0.95rem;
+        }
+        .input-custom::placeholder, textarea.input-custom::placeholder { color: var(--color-text-muted); opacity: 0.7; }
+        .input-custom:focus, textarea.input-custom:focus {
+            outline: none;
+            border-color: var(--color-accent); /* White border on focus */
+            background-color: var(--color-bg); 
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1); /* Subtle white glow */
+        }
+        textarea.input-custom { min-height: 120px; resize: vertical; }
+
+        #main-footer {
+            border-top: 1px solid var(--color-border);
+            background-color: var(--color-bg); 
+            padding-top: 3.5rem; padding-bottom: 3.5rem;
+        }
+        #main-footer a:hover i {
+            transform: scale(1.15);
+            color: var(--color-accent); 
+        }
+        #main-footer a i { 
+            transition: transform 0.2s ease, color 0.2s ease; 
+            font-size: 1.5rem; /* Slightly larger footer icons */
+            color: var(--color-text-muted);
+        }
+        #main-footer p {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--color-text-muted);
+        }
+        #main-footer .footer-highlight { color: var(--color-accent); }
+
+        /* GSAP Animation Helper Classes */
+        .g-fade-in, .g-fade-in-up, .g-fade-in-down, .g-fade-in-left, .g-fade-in-right, .g-scale-in {
+            opacity: 0; 
+            will-change: transform, opacity; 
+        }
+        .g-stagger-children > * {
+            opacity: 0; /* Children start hidden for stagger */
+        }
+
+        #back-to-top {
+            background-color: rgba(255, 255, 255, 0.15); /* Semi-transparent white */
+            backdrop-filter: blur(5px);
+            color: var(--color-text-strong); /* White icon */
+            width: 3rem; height: 3rem;
+            border-radius: 50%;
+            border: 1px solid var(--color-border);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease, background-color 0.3s ease;
+        }
+        #back-to-top:hover {
+             background-color: rgba(255, 255, 255, 0.25);
+             transform: scale(1.08) translateY(-2px); 
+        }
+        #back-to-top i { font-size: 1.1rem; }
+
+    </style>
+</head>
+<body class="antialiased">
+
+    <header id="main-header" class="fixed top-0 left-0 right-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20 md:h-24">
+                <a href="#hero" class="text-2xl md:text-3xl font-heading-style font-bold g-fade-in-down" style="animation-delay: 0.8s;">
+                    yuukii<span style="color: var(--color-accent);">.</span>
+                </a>
+                <nav class="hidden md:flex space-x-1 items-center g-fade-in-down" style="animation-delay: 1s;">
+                    <a href="#hero" class="nav-link active-link">Home</a>
+                    <a href="#about" class="nav-link">About</a>
+                    <a href="#services" class="nav-link">Services</a>
+                    <a href="#process" class="nav-link">Process</a>
+                    <a href="#portfolio" class="nav-link">Portfolio</a>
+                    <a href="#contact" class="btn-custom btn-custom-secondary !text-xs !px-4 !py-2 ml-3">Contact</a>
+                </nav>
+                <button id="mobile-nav-toggle" class="md:hidden z-[60] mobile-nav-toggle g-fade-in-down" style="animation-delay: 1s;" aria-label="Toggle navigation" aria-expanded="false" aria-controls="mobile-menu">
+                    <div class="space-y-1.5">
+                        <span class="block w-7 h-0.5 hamburger-line hamburger-top"></span>
+                        <span class="block w-7 h-0.5 hamburger-line hamburger-middle"></span>
+                        <span class="block w-7 h-0.5 hamburger-line hamburger-bottom"></span>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </header>
+    <div id="mobile-menu" class="fixed inset-0 z-40 pt-20 md:hidden flex flex-col items-center justify-center space-y-3 opacity-0 invisible transform -translate-y-5" role="dialog" aria-modal="true">
+        <nav class="flex flex-col items-center space-y-3">
+            <a href="#hero" class="mobile-nav-link">Home</a>
+            <a href="#about" class="mobile-nav-link">About Me</a>
+            <a href="#services" class="mobile-nav-link">Services</a>
+            <a href="#process" class="mobile-nav-link">My Process</a>
+            <a href="#portfolio" class="mobile-nav-link">Portfolio</a>
+            <a href="#contact" class="mobile-nav-link">Contact</a>
+        </nav>
+    </div>
+
+    <main>
+        <section id="hero" class="flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8">
+            <div class="z-10 relative">
+                <h1 class="g-fade-in-up">
+                    <span class="block">Freelance Digital Services</span>
+                </h1>
+                <p id="hero-tagline" class="mt-6 md:mt-8 hero-tagline max-w-2xl mx-auto g-fade-in-up" style="animation-delay: 0.3s;">
+                    I’m a freelance digital service provider helping small businesses, bloggers, startups, and personal brands shine online with affordable, AI-enhanced solutions.
+                </p>
+                <div class="mt-10 md:mt-12 space-x-3 sm:space-x-4 g-fade-in-up" style="animation-delay: 0.6s;">
+                    <a href="#services" class="btn-custom btn-custom-primary text-sm md:text-base px-7 md:px-9 py-3 md:py-3.5">
+                        Explore My Services
+                    </a>
+                    <a href="#contact" class="btn-custom btn-custom-secondary text-sm md:text-base px-7 md:px-9 py-3 md:py-3.5">
+                        Get In Touch <i class="fas fa-arrow-right ml-2 text-xs opacity-80" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="px-4 sm:px-6 lg:px-8 section-border-t">
+            <div class="container mx-auto">
+                <div class="text-center mb-12 md:mb-16">
+                    <h2 class="section-title g-fade-in-up">About Me</h2>
+                    <p class="section-subtitle g-fade-in-up" style="animation-delay: 0.1s;">
+                        Adwaith from Thrissur, Kerala - blending creativity with technology.
+                    </p>
+                </div>
+                <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8 md:gap-12 items-start">
+                    <div class="g-fade-in-left" style="animation-delay: 0.2s;">
+                        <h3 class="text-2xl font-semibold mb-4 text-color-accent">Who I Am</h3>
+                        <p class="text-color-text-muted leading-relaxed mb-6">
+                            Hello! I'm Adwaith, a passionate digital creative hailing from the vibrant cultural capital of Kerala, Thrissur. My journey is fueled by a fascination for how technology can empower individuals and businesses to make their mark online. I believe in a collaborative approach, working closely with clients to understand their vision and bring it to life with a blend of technical skill and artistic flair.
+                        </p>
+                        <p class="text-color-text-muted leading-relaxed">
+                            Beyond the pixels and code, I'm an avid learner, always exploring new tools and techniques to stay at the forefront of the digital landscape. My goal is to provide solutions that are not just effective but also reflect the unique personality of each brand I work with.
+                        </p>
+                    </div>
+                    <div class="g-fade-in-right" style="animation-delay: 0.3s;">
+                        <h3 class="text-2xl font-semibold mb-6 text-color-accent">Skills & Expertise</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="text-lg font-semibold text-color-text-strong mb-2">Core Proficiencies:</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="skill-tag">HTML</span>
+                                    <span class="skill-tag">CSS</span>
+                                    <span class="skill-tag">JavaScript (Frontend)</span>
+                                    <span class="skill-tag">Python Programming</span>
+                                    <span class="skill-tag">PHP (Beginner)</span>
+                                    <span class="skill-tag">Backend Development (Beginner)</span>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-color-text-strong mb-2">Design & Creative Tools:</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="skill-tag">Canva</span>
+                                    <span class="skill-tag">Wix Web Design</span>
+                                    <span class="skill-tag">DaVinci Resolve</span>
+                                    <span class="skill-tag">Adobe Premiere Pro</span>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-color-text-strong mb-2">Community & Management:</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="skill-tag">Online Community Management</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="services" class="px-4 sm:px-6 lg:px-8 section-border-t bg-color-bg-alt">
+            <div class="container mx-auto text-center">
+                <h2 class="section-title g-fade-in-up">Services Offered</h2>
+                <p class="section-subtitle g-fade-in-up" style="animation-delay: 0.1s;">
+                    By blending cutting-edge AI tools with human creativity, I deliver fast, reliable, and tailored results that fit your budget.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto g-stagger-children">
+                    <div class="service-card text-left">
+                        <div class="icon-container"><i class="fas fa-laptop-code"></i></div>
+                        <h3>Basic, Mobile-Friendly Websites</h3>
+                        <p>Crafting clean, responsive websites that look great on any device, providing a solid online foundation for your brand.</p>
+                    </div>
+                    <div class="service-card text-left">
+                        <div class="icon-container"><i class="fas fa-file-alt"></i></div>
+                        <h3>SEO-Optimized Blog Writing</h3>
+                        <p>Developing engaging and keyword-rich blog content designed to improve search engine rankings and attract your target audience.</p>
+                    </div>
+                    <div class="service-card text-left">
+                        <div class="icon-container"><i class="fas fa-pen-nib"></i></div>
+                        <h3>Engaging Copywriting</h3>
+                        <p>Writing compelling copy for websites, ads, and marketing materials that resonates with readers and drives action.</p>
+                    </div>
+                    <div class="service-card text-left">
+                        <div class="icon-container"><i class="fas fa-robot"></i></div>
+                        <h3>Chatbot Setup (AI-Assisted)</h3>
+                        <p>Implementing AI-powered chatbots, fine-tuned to your brand’s voice, to enhance customer engagement and automate responses.</p>
+                    </div>
+                    <div class="service-card text-left">
+                        <div class="icon-container"><i class="fas fa-envelope-open-text"></i></div>
+                        <h3>Automated Email/Newsletter Content</h3>
+                        <p>Creating and scheduling AI-assisted email campaigns and newsletters to keep your audience informed and engaged.</p>
+                    </div>
+                    <div class="service-card text-left">
+                        <div class="icon-container"><i class="fas fa-share-alt"></i></div>
+                        <h3>Social Media Post Generation</h3>
+                        <p>Generating creative and consistent social media content using AI tools to boost your online presence and engagement.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="process" class="px-4 sm:px-6 lg:px-8 section-border-t">
+            <div class="container mx-auto text-center">
+                <h2 class="section-title g-fade-in-up">My Approach: AI-Enhanced, Human-Perfected</h2>
+                <p class="section-subtitle g-fade-in-up" style="animation-delay: 0.1s;">
+                    AI speeds up content creation and data analysis, but I always add human insight to refine tone, align with your brand, and ensure quality.
+                </p>
+                <div class="max-w-3xl mx-auto grid md:grid-cols-2 gap-8 items-stretch g-stagger-children">
+                    <div class="service-card text-left g-fade-in-up" style="animation-delay: 0.2s;">
+                        <div class="icon-container"><i class="fas fa-user-check"></i></div>
+                        <h3>Human Oversight is Key</h3>
+                        <p>For example, while AI drafts blogs or chatbot responses, I personally edit for clarity, accuracy, and personality. Chatbots are customized to your specific needs, with manual review to catch any logic gaps or enhance user experience.</p>
+                    </div>
+                    <div class="service-card text-left g-fade-in-up" style="animation-delay: 0.3s;">
+                        <div class="icon-container"><i class="fas fa-handshake-angle"></i></div>
+                        <h3>Transparency & Value</h3>
+                        <p>My focus is on transparency, value, and results—think professional deliverables, quick turnarounds, and personalized touches without breaking the bank. Let’s build your digital presence together!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="portfolio" class="px-4 sm:px-6 lg:px-8 section-border-t bg-color-bg-alt">
+            <div class="container mx-auto text-center">
+                <h2 class="section-title g-fade-in-up">Portfolio Snapshots</h2>
+                <p class="section-subtitle g-fade-in-up" style="animation-delay: 0.1s;">
+                    Take a peek at what's cooking. More examples of my work are on their way!
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto g-stagger-children">
+                    <div class="portfolio-placeholder-card text-left">
+                        <div class="icon-container"><i class="fas fa-drafting-compass"></i></div>
+                        <h3>Project Alpha</h3>
+                        <p>Coming Soon.</p>
+                        <span class="placeholder-tag">Coming Soon</span> 
+                    </div>
+                    <div class="portfolio-placeholder-card text-left">
+                        <div class="icon-container"><i class="fas fa-chart-line"></i></div>
+                        <h3>Project Beta</h3>
+                        <p>Coming Soon.</p> 
+                        <span class="placeholder-tag">Coming Soon</span> 
+                    </div>
+                    <div class="portfolio-placeholder-card text-left">
+                        <div class="icon-container"><i class="fas fa-comments"></i></div>
+                        <h3>Project Gamma</h3>
+                        <p>Coming Soon.</p> 
+                        <span class="placeholder-tag">Coming Soon</span> 
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="px-4 sm:px-6 lg:px-8 section-border-t">
+            <div class="container mx-auto text-center max-w-lg">
+                <h2 class="section-title g-fade-in-up">Let's Build Your Digital Presence</h2>
+                <p class="section-subtitle mb-10 md:mb-12 g-fade-in-up" style="animation-delay: 0.1s;">
+                    Ready to elevate your brand with affordable, AI-enhanced digital solutions? Reach out and let's discuss your project!
+                </p>
+                <form id="contact-form" class="space-y-6 g-fade-in-up" style="animation-delay: 0.2s;" novalidate>
+                    <div>
+                        <label for="name" class="sr-only">Your Name</label>
+                        <input type="text" id="name" name="name" class="input-custom" placeholder="Your Name">
+                    </div>
+                    <div>
+                        <label for="email" class="sr-only">Email Address</label>
+                        <input type="email" id="email" name="email" class="input-custom" placeholder="Email Address" required aria-required="true">
+                    </div>
+                    <div>
+                        <label for="message" class="sr-only">Your Message</label>
+                        <textarea id="message" name="message" rows="5" class="input-custom" placeholder="Tell me about your project or ask a question..." required aria-required="true"></textarea>
+                    </div>
+                    <button type="submit" class="btn-custom btn-custom-primary w-full text-base py-3.5">
+                        Send Message <i class="fas fa-paper-plane ml-2 text-sm opacity-90" aria-hidden="true"></i>
+                    </button>
+                </form>
+                 <p id="form-status" class="mt-6 text-sm" role="status" aria-live="polite"></p>
+                 <p class="text-xs text-color-text-muted mt-4">Alternatively, email directly at: <a href="mailto:yuukiicode@proton.me" class="text-color-accent hover:underline">yuukiicode@proton.me</a></p>
+            </div>
+        </section>
+    </main>
+
+    <footer id="main-footer">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="flex justify-center space-x-6 md:space-x-8 mb-8">
+                <a href="https://www.upwork.com/" aria-label="Upwork Profile" target="_blank" rel="noopener noreferrer"><i class="fab fa-upwork"></i></a>
+                <a href="https://www.freelancer.com/" aria-label="Freelancer Profile" target="_blank" rel="noopener noreferrer"><i class="fas fa-briefcase"></i></a> 
+                <a href="https://www.fiverr.com/" aria-label="Fiverr Profile" target="_blank" rel="noopener noreferrer"><i class="fas fa-handshake"></i></a> 
+                <a href="https://discord.com/" aria-label="Discord Server" target="_blank" rel="noopener noreferrer"><i class="fab fa-discord"></i></a>
+                <a href="https://www.instagram.com/" aria-label="Instagram Profile" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+            </div>
+            <p class="mb-2">Freelance Digital Services by <span class="footer-highlight">yuukii</span>.</p>
+            <p class="text-xs">&copy; <span id="current-year"></span> All rights reserved. AI-Enhanced, Human-Perfected.</p>
+        </div>
+    </footer>
+
+    <button id="back-to-top" aria-label="Back to top" class="fixed bottom-6 right-6 md:bottom-8 md:right-8 flex items-center justify-center opacity-0 invisible z-40">
+        <i class="fas fa-arrow-up" aria-hidden="true"></i>
+    </button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+            const mainHeaderElement = document.getElementById('main-header');
+            const mobileNavToggle = document.getElementById('mobile-nav-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const allNavLinks = document.querySelectorAll('#main-header nav a.nav-link, #mobile-menu nav a.mobile-nav-link');
+
+            // Header scroll effect
+            if (mainHeaderElement) {
+                ScrollTrigger.create({
+                    start: "top -80", 
+                    end: 99999,
+                    toggleClass: { className: 'header-scrolled', targets: mainHeaderElement }
+                });
+            }
+
+            // Mobile navigation
+            if (mobileNavToggle && mobileMenu) {
+                mobileNavToggle.addEventListener('click', () => {
+                    const isExpanded = mobileNavToggle.getAttribute('aria-expanded') === 'true';
+                    mobileNavToggle.setAttribute('aria-expanded', String(!isExpanded));
+                    mobileMenu.classList.toggle('menu-open');
+                    mobileMenu.classList.toggle('opacity-0');
+                    mobileMenu.classList.toggle('invisible');
+                    mobileMenu.classList.toggle('-translate-y-5');
+                    document.body.classList.toggle('mobile-menu-open', !isExpanded);
+                });
+            }
+
+            // Smooth scroll for all nav links & close mobile menu
+            allNavLinks.forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+
+                    if (targetElement) {
+                        const headerHeight = mainHeaderElement ? mainHeaderElement.offsetHeight : 80;
+                        let scrollToPosition = targetElement.offsetTop - headerHeight;
+                        if (targetId === '#hero') scrollToPosition = 0; 
+
+                        gsap.to(window, {
+                            duration: 0.8,
+                            scrollTo: { y: scrollToPosition, autoKill: true },
+                            ease: "power2.inOut"
+                        });
+
+                        if (mobileMenu.classList.contains('menu-open')) {
+                            mobileNavToggle.setAttribute('aria-expanded', 'false');
+                            mobileMenu.classList.remove('menu-open');
+                            mobileMenu.classList.add('opacity-0', 'invisible', '-translate-y-5');
+                            document.body.classList.remove('mobile-menu-open');
+                        }
+                    }
+                });
+            });
+
+            // Active link highlighting
+            const sections = document.querySelectorAll('main section[id]');
+            function updateActiveLink() {
+                let currentSectionId = 'hero';
+                const headerHeightForActiveLink = mainHeaderElement ? mainHeaderElement.offsetHeight : 80;
+                const scrollYWithOffset = window.scrollY + headerHeightForActiveLink + 60; 
+
+                sections.forEach(section => {
+                    if (section.offsetTop <= scrollYWithOffset && (section.offsetTop + section.offsetHeight) > scrollYWithOffset) {
+                        currentSectionId = section.getAttribute('id');
+                    }
+                });
+                
+                allNavLinks.forEach(link => {
+                    link.classList.remove('active-link');
+                    if (link.getAttribute('href') === `#${currentSectionId}` && !link.classList.contains('btn-custom')) {
+                        link.classList.add('active-link');
+                    }
+                });
+            }
+            window.addEventListener('scroll', updateActiveLink);
+            updateActiveLink(); 
+
+            // Back to top button
+            const backToTopButton = document.getElementById('back-to-top');
+            if (backToTopButton) {
+                backToTopButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    gsap.to(window, { duration: 1, scrollTo: { y: '#hero' }, ease: "power2.inOut" });
+                });
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 300) {
+                        backToTopButton.classList.remove('opacity-0', 'invisible');
+                    } else {
+                        backToTopButton.classList.add('opacity-0', 'invisible');
+                    }
+                });
+            }
+
+            // GSAP Animations
+            gsap.fromTo("#hero h1", 
+                { opacity: 0, y: 50, scale: 0.95 }, 
+                { opacity: 1, y: 0, scale: 1, duration: 1, ease: "expo.out", delay: 0.3 }
+            );
+            gsap.fromTo("#hero .hero-tagline", 
+                { opacity: 0, y: 40 }, 
+                { opacity: 1, y: 0, duration: 0.9, ease: "power3.out", delay: 0.6 }
+            );
+            gsap.fromTo("#hero .btn-custom", 
+                { opacity: 0, y: 30, scale: 0.9 }, 
+                { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "back.out(1.4)", stagger: 0.15, delay: 0.9 }
+            );
+             gsap.fromTo("#main-header .g-fade-in-down", 
+                {opacity:0, y:-25}, 
+                {opacity:1, y:0, duration:0.7, ease:"power2.out", stagger:0.1, delay:1.2}
+            );
+
+            const createScrollAnimation = (selector, fromVars, toVarsBase, stagger = 0.1) => {
+                gsap.utils.toArray(selector).forEach((el, i) => {
+                    const delay = parseFloat(el.style.animationDelay) || 0; 
+                    gsap.fromTo(el, fromVars, {
+                        ...toVarsBase,
+                        delay: delay + (stagger > 0 ? (i * stagger) : 0), 
+                        scrollTrigger: {
+                            trigger: el,
+                            start: "top 85%", 
+                            end: "bottom 15%",
+                            toggleActions: "play none none reverse", 
+                        }
+                    });
+                });
+            };
+            
+            createScrollAnimation(".section-title.g-fade-in-up", { opacity: 0, y: 50, scale:0.98 }, { opacity: 1, y: 0, scale:1, duration: 0.8, ease: "expo.out" }, 0);
+            createScrollAnimation(".section-subtitle.g-fade-in-up", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, 0);
+            
+            // Updated to include .service-card in #process section for staggered animation
+            gsap.fromTo(".g-stagger-children > .service-card, .g-stagger-children > .portfolio-placeholder-card", 
+                { opacity: 0, y: 40, scale: 0.95 }, 
+                { 
+                    opacity: 1, y: 0, scale: 1, 
+                    duration: 0.7, 
+                    ease: "back.out(1.2)", 
+                    stagger: 0.15,
+                    scrollTrigger: {
+                        trigger: ".g-stagger-children",
+                        start: "top 80%",
+                        toggleActions: "play none none reverse"
+                    }
+                }
+            );
+            
+            createScrollAnimation("#about .g-fade-in-left", { opacity: 0, x: -40 }, { opacity: 1, x: 0, duration: 0.7, ease: "power2.out" }, 0);
+            createScrollAnimation("#about .g-fade-in-right", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.7, ease: "power2.out" }, 0);
+            // GSAP for approach boxes (now .service-card) will be covered by the .g-stagger-children selector if #process .grid is given .g-stagger-children
+            // Or if they have individual g-fade-in-up, createScrollAnimation will handle them.
+            // The current HTML for #process section has g-fade-in-up on individual cards and g-stagger-children on their parent.
+            createScrollAnimation("#contact-form.g-fade-in-up", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, 0);
+
+            const contactForm = document.getElementById('contact-form');
+            const formStatus = document.getElementById('form-status');
+            if (contactForm && formStatus) {
+                contactForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const emailInput = document.getElementById('email');
+                    const messageInput = document.getElementById('message');
+                    let isValid = true;
+                    let statusMessage = '';
+
+                    if (emailInput.value.trim() === '' || !emailInput.checkValidity()) {
+                        statusMessage = 'Please enter a valid email address.';
+                        isValid = false;
+                        if(emailInput) emailInput.focus();
+                    } else if (messageInput.value.trim() === '') {
+                         statusMessage = 'Please write a message.';
+                         isValid = false;
+                         if(messageInput) messageInput.focus();
+                    }
+
+                    if (!isValid) {
+                        formStatus.textContent = statusMessage;
+                        formStatus.className = 'mt-6 text-sm text-red-400'; 
+                        return;
+                    }
+
+                    formStatus.textContent = 'Sending your message...';
+                    formStatus.className = 'mt-6 text-sm text-yellow-400'; 
+                    
+                    // Simulate form submission
+                    setTimeout(() => {
+                        // For a real form, you would send data to yuukiicode@proton.me via a backend service.
+                        formStatus.textContent = 'Message sent! I\'ll get back to you soon at yuukiicode@proton.me.';
+                        formStatus.className = 'mt-6 text-sm text-green-400'; 
+                        contactForm.reset();
+                    }, 1500);
+                });
+            }
+
+            const currentYearEl = document.getElementById('current-year');
+            if (currentYearEl) currentYearEl.textContent = new Date().getFullYear();
+
+            console.log("yuukii - Freelance Digital Services Portfolio Initialized.");
+        });
+    </script>
+</body>
+</html>
